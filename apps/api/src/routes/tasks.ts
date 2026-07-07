@@ -41,5 +41,5 @@ taskRouter.post("/tasks", (req: Request, res: Response) => {
 
     // Add the new task
     tasks.push(newTask);
-    return res.status(HttpStatus.OK).json(newTask);
+    return res.status(HttpStatus.CREATED).json(newTask);
 });

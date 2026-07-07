@@ -5,11 +5,20 @@
 import express, { type Application } from 'express';
 import { taskRouter } from './routes/tasks.js';
 
-// Create the app
-export const app: Application = express();
+/**
+ * Creates an express application with the proper configurations and routers for the web server
+ * @returns an fully configured express app object
+ */
+export function createApp() {
+    // Create the app
+    const app: Application = express();
 
-// Add any configurations
-app.use(express.json());
+    // Add any configurations
+    app.use(express.json());
 
-// Add all routes
-app.use(taskRouter);
+    // Add all routes
+    app.use(taskRouter);
+
+    return app;
+}
+

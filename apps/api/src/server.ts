@@ -1,4 +1,4 @@
-import { app } from './app.js';
+import { createApp } from './app.js';
 import 'dotenv/config';
 
 // Read in the port
@@ -9,6 +9,8 @@ const PORT = Number(process.env.PORT ?? 3000);
  */
 async function main() {
     //TODO(#2): Add db connection logic
+    const app = createApp();
+
     app.listen(PORT, () => {
         console.log(`Connected to server on port: ${PORT}`);
     });
