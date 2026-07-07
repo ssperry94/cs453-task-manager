@@ -1,9 +1,10 @@
 /**
- * Holds the object representation of a task
+ * Holds the various types used in the server
 */
 
 import * as z from 'zod';
 
+// The status enum indicates the project of the task on the board
 export const Status = {
     TODO: "todo",
     DONE: "done",
@@ -14,6 +15,8 @@ export const Status = {
 export type Status = typeof Status[keyof typeof Status];
 
 // Schema's
+
+// A schema representing the status enum. Enforces only valid values used in new tasks
 export const StatusSchema = z.enum([
     Status.TODO,
     Status.DONE,
@@ -21,24 +24,21 @@ export const StatusSchema = z.enum([
     Status.WONT_DO
 ]);
 
+// Outlines all required fields of the Task type
 export const TaskSchema = z.object({
     id: z.number(),
     title: z.string(),
     status: StatusSchema
 });
 
+// Schema for creating tasks - allows all values outlined in the task schema except for id (set internally)
 export const TaskCreationSchema = TaskSchema.omit({id: true});
 
 // Infer types from Zod Schema's
 export type Task = z.infer<typeof TaskSchema>;
 export type TaskCreation = z.infer<typeof TaskCreationSchema>;
 
-// export interface Task {
-//     id: number,
-//     title: string,
-//     status: Status
-// };
-
+// Enum representing common HttpStatuses
 export const HttpStatus = {
     OK: 200,
     CREATED: 201,
