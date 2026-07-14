@@ -6,11 +6,25 @@ import { describe, expect, test } from "vitest";
 import request from "supertest";
 import { createApp } from "../src/app.js";
 import { HttpStatus, Status } from "../src/types.js";
+import { create } from "node:domain";
 
 describe("Unit testing for task routes", () => {
     test("GET /tasks returns status OK", async () => {
         const app = createApp();
         await request(app).get("/tasks").expect(HttpStatus.OK);
+    });
+
+    test("GET /tasks/:id returns status OK", async () => {
+        const app = createApp();
+
+        await request(app).get("/tasks/1").expect(HttpStatus.OK);
+
+    });
+
+    test("GET /tasks/:id returns NOT_FOUND on task that doesn't exist", async () => {
+        const app = createApp();
+
+        await request(app).get("/tasks/9999").expect(HttpStatus.NOT_FOUND);
     });
 
     test("POST /tasks adds new task correctly", async () => {
@@ -35,5 +49,41 @@ describe("Unit testing for task routes", () => {
         await request(app).post("/tasks").set("Accept", "application/json").send({
             status: Status.TODO
         }).expect(HttpStatus.BAD_REQUEST);
-    })
+    });
+
+    test("PATCH /tasks/:id correctly updates the proper fields.", async () => {
+        const app = createApp();
+
+        // Get the item with id of 1
+        const expectedResponse = await request(app).get("/tasks/1").expect(HttpStatus.OK);
+
+        const res = await request(app).patch("/tasks/1").set("Accept", "application/json").send({
+            status: Status.WONT_DO
+        }).expect(HttpStatus.OK);
+
+        // Assert that we actually updated the status
+        expect(res.body.status).not.toBe(expectedResponse.body.status);
+        expect(res.body.status).toBe(Status.WONT_DO);
+
+    });
+
+    test("PATCH /tasks/:id returns BAD REQUEST if no fields are present.", async () => {
+        const app = createApp();
+
+        await request(app).patch("/tasks/1").set("Accept", "application/json").send({}).expect(HttpStatus.BAD_REQUEST);
+    });
+
+    test("DELETE /tasks/:id deletes the task and returns 204.", async () => {
+        const app = createApp();
+
+        // Get the first task
+        const toBeDeleted = await request(app).get("/tasks/1").expect(HttpStatus.OK);
+
+        await request(app).delete("/tasks/1").expect(HttpStatus.NO_CONTENT);
+
+        // Confirm the item is deleted
+        const tasks = await request(app).get("/tasks");
+
+        expect(tasks.body).not.toContain(toBeDeleted.body);
+    });
 });
