@@ -28,4 +28,12 @@ describe("Unit testing for task routes", () => {
             status: Status.TODO
         }));
     });
+
+    test("POST /tasks correctly returns BAD REQUEST on missing field", async () => {
+        const app = createApp();
+
+        await request(app).post("/tasks").set("Accept", "application/json").send({
+            status: Status.TODO
+        }).expect(HttpStatus.BAD_REQUEST);
+    })
 });

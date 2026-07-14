@@ -2,12 +2,13 @@
  * Holds all routes that act on task related endpoints
  */
 
-import { TaskCreationSchema, Task, Status, HttpStatus } from "../types.js";
+import { type Task, Status, HttpStatus } from "../types.js";
 import  Router, { type Request, type Response } from 'express';
+import { validateTask } from '../middleware/validation.js';
 
-// TODO(#2): Database needs to handle ID
+// TODO(#3): Database needs to handle ID
 let currentId = 2;
-// TODO(#2) Move to database
+// TODO(#3) Move to database
 const tasks: Task[] = [
     {id: 1, title: "Dummy Task 1", status: Status.IN_PROGRESS},
     {id: 2, title: "Dummy Task 2", status: Status.TODO}
@@ -26,13 +27,7 @@ taskRouter.get("/tasks", (req: Request, res: Response) => {
 /**
  * The /tasks post request. Adds a new task to the task database and sets the ID
  */
-taskRouter.post("/tasks", (req: Request, res: Response) => {
-    // Verify the incoming task has all correct types and fields
-    const result = TaskCreationSchema.safeParse(req.body);
-    if (!result.success) {
-        return res.status(HttpStatus.BAD_REQUEST).json({errors: result.error.issues});
-    }
-
+taskRouter.post("/tasks", validateTask, (req: Request, res: Response) => {
     const newTask = {
         id: ++currentId,
         title: req.body.title,
