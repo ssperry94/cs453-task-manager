@@ -2,11 +2,29 @@
  * Contains automated unit tests for the task routes
  */
 
-import { describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test } from "vitest";
+import { pool } from "../src/db/pool.js";
 import request from "supertest";
 import { createApp } from "../src/app.js";
 import { HttpStatus, Status } from "../src/types.js";
-import { create } from "node:domain";
+
+// Reset the database state after each test, so any data currently in the database will be lost
+beforeEach(async () => {
+    await pool.query(
+        `
+        TRUNCATE TABLE tasks
+        RESTART IDENTITY
+        CASCADE
+        `
+    );
+
+    await pool.query(
+        `
+        INSERT INTO tasks (title, status)
+        VALUES ('Dummy Task', 'todo')
+        `
+    );
+});
 
 describe("Unit testing for task routes", () => {
     test("GET /tasks returns status OK", async () => {

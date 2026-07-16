@@ -1,9 +1,10 @@
 version: "3.9"
+name: cs453-development
 
 services:
   postgres:
     image: postgres:16
-    container_name: cs453-postgres
+    container_name: cs453-postgres-development
     restart: unless-stopped
     environment:
       POSTGRES_DB: cs453
