@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "api:install": "npm --prefix apps/api install",
+    "install": "npm --prefix apps/api install",
     "dev": "npm --prefix apps/api run dev",
     "build": "npm --prefix apps/api run build",
     "start": "npm --prefix apps/api run start",

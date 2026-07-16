@@ -2,6 +2,12 @@ import { HttpStatus } from "../types.js";
 import { type Request, type Response } from 'express';
 import { pool } from '../db/pool.js';
 
+/**
+ * Queries the database for all current tasks
+ * @param req the incoming request
+ * @param res a response object to send
+ * @returns a response object containing an array of all task objects, or containing an error message
+ */
 export async function getAllTasks(req: Request, res: Response) {
     try {
       const result = await pool.query(`
@@ -13,10 +19,16 @@ export async function getAllTasks(req: Request, res: Response) {
       return res.status(HttpStatus.OK).json(result.rows);
     } catch (error) {
       console.error("Failed to load tasks:", error);
-      return res.status(500).json({error: "Internal Server Error - failed to load tasks"});
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({error: "Internal Server Error - failed to load tasks"});
     }
 }
 
+/**
+ * Queries the database for the task based on the ID parameter
+ * @param req the incoming request
+ * @param res a response object to send
+ * @returns the task object matching the ID, or a response object of 404
+ */
 export async function getTask(req: Request, res: Response) {
     const id = req.params.id;
 
@@ -40,6 +52,12 @@ export async function getTask(req: Request, res: Response) {
     }
 }
 
+/**
+ * Creates a new task in the database
+ * @param req the incoming request
+ * @param res a response object to send
+ * @returns the newly created task or an error message
+ */
 export async function createTask(req: Request, res: Response) {
     const title = req.body.title;
     const status= req.body.status;
@@ -60,6 +78,12 @@ export async function createTask(req: Request, res: Response) {
     }
 }
 
+/**
+ * Updates a current task in the database
+ * @param req the incoming request
+ * @param res a response object to send
+ * @returns a response object containing the updated task object, or a 404 NOT_FOUND response
+ */
 export async function updateTask(req: Request, res: Response) {
     const id = Number(req.params.id);
     const title = req.body.title ?? null;
@@ -86,6 +110,12 @@ export async function updateTask(req: Request, res: Response) {
     }
 }
 
+/**
+ * Deletes the task based on the ID parameter
+ * @param req the incoming request
+ * @param res a response object to send
+ * @returns a 204 status or an object containing an error message on failure
+ */
 export async function deleteTask(req: Request, res: Response) {
     const id = Number(req.params.id);
     try {
@@ -99,12 +129,12 @@ export async function deleteTask(req: Request, res: Response) {
       );
 
       if (result.rowCount === 0) {
-        return res.status(404).json({error: "Item could not be located."});
+        return res.status(HttpStatus.NOT_FOUND).json({error: "Item could not be located."});
       }
 
       return res.sendStatus(HttpStatus.NO_CONTENT);
     } catch (error) {
       console.error("Failed to delete item: ", error);
-      return res.status(500).json({error: "Internal Server Error - Failed to delete item."});
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({error: "Internal Server Error - Failed to delete item."});
     }
 }

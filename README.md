@@ -1,233 +1,82 @@
 
 # CS453/553 Client-Server Architecture Project
 
-This repository contains the **starter template** for the semester project in  
-**CS453 / CS553 – Client/Server Architectures**.
+## About
+This is a simple task manager system in which users can provide a task title and status and commit it to a database. This project is meant to demonstrate basic API structure, database activity, and other client-server architecture.
 
-Students will build and extend a distributed web application over the course
-of the semester. The system will evolve through several architectural stages,
-mirroring the historical evolution of modern web systems.
+Both the development database and the test database create a task table and initialize a starter task on container startup.
 
-The goal of the project is to help students understand **how real client/server
-systems are designed and built**, including:
+## Requirements
+- Node v24.16.0+
+- Docker v29.6.1+
 
-- REST API design
-- database integration
-- authentication and authorization
-- multi-service architectures
-- real-time communication
-- modern API technologies
-
----
-
-# Project Overview
-
-The semester project is a **Task / Project Management System**.
-
-The application allows users to:
-
-- create projects
-- create tasks within projects
-- assign tasks to users
-- track task status
-- comment on tasks
-- view project activity
-
-This domain is intentionally simple so that the focus remains on **system
-architecture and communication between components**, rather than complex
-business logic.
-
----
-
-# Architecture Overview
-
-The system follows a typical web architecture.
-
-```shell
-Browser Client
-|
-v
-REST API
-|
-v
-PostgreSQL
+## Setting up the env file
+From within the `apps/api` directory, create a `.env` file with the following default values:
+```bash
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/cs453
+PORT=3000
 ```
+**You must create this file with at least the `DATABASE_URL` or the server will not be able to connect with the database!!**
 
+## How to Run
+Ensure that you've followed the **Setting up the env file** steps above.
 
-Over the semester, the architecture will evolve to include additional
-components such as authentication services, real-time communication,
-and potentially additional APIs.
-
-Example extended architecture:
-
-```shell
-Browser Client
-|
-v
-API Layer
-/
-Auth API Task API
-|
-v
-PostgreSQL
-```
-
----
-
-# Technology Stack
-
-The default project stack is:
-
-Server
-- Node.js
-- TypeScript
-- Express
-
-Database
-- PostgreSQL
-
-Development Tools
-- Docker (for database)
-- npm
-- Git
-
-Students who prefer Python may implement the server using **FastAPI**, but
-all examples and starter code will use **TypeScript**.
-
----
-
-# Repository Structure
-
-```shell
-cs453-project-template
-│
-├── apps
-│ ├── api
-│ │ Server-side application
-│ │
-│ └── client
-│ Simple browser client
-│
-├── database
-│ Database schema, migrations, and seed data
-│
-├── docs
-│ Architecture documentation
-│
-├── scripts
-│ Utility scripts for development
-│
-├── docker-compose.yml
-│ Starts PostgreSQL database
-│
-└── README.md
-```
-
----
-
-# Development Setup
-
-## 1. Clone the repository
-
-```shell
-git clone <your-repository-url>
-cd cs453-project-template
-```
-
-## 2. Start the database
-
-This project uses Docker to run PostgreSQL locally.
-
-```shell
-docker-compose up -d
-```
-
-This will start a PostgreSQL database container.
-
----
-
-## 3. Install dependencies
-
-```shell
-cd apps/api
+Run all of the following commands from the root directory:
+1) Install the Dependencies
+```bash
 npm install
 ```
 
----
-
-## 4. Run the server
-```shell
-npm run dev
+2) Build the project
+```bash
+npm run build
 ```
 
+3) Bring up the development database
+```bash
+docker compose -f docker-compose.yml up -d
+```
 
-The API server should start locally.
+4) Start the Server
+```bash
+npm run start
+```
 
----
+5) After stopping the server, bring down the development database with:
+```bash
+docker compose -f docker-compose.yml down -v
+```
 
-# Project Milestones
+## How to Manually Fire the Endpoints
+Ensure that you have followed the above steps to properly run the server. There are 6 endpoints to fire. The table below provides the URI and curl commands to test each endpoint's happy path.
 
-The project will evolve over several milestones during the semester.
+| Endpoint | Curl Command |
+| -------- | ------------ |
+| GET /tasks | `curl http://localhost:3000/tasks` |
+| GET /tasks/{id} | `curl http://localhost:3000/tasks/1` |
+| POST /tasks | `curl -X POST http://localhost:3000/tasks -H "Content-Type: application/json" -d '{"title":"Dummy Task","status":"todo"}'` |
+| PATCH /tasks/{id} | `curl -X PATCH http://localhost:3000/tasks/1 -H "Content-Type: application/json" -d '{"title":"Updated Task","status":"done"}'` |
+| DELETE /tasks/{id} | `curl -X DELETE http://localhost:3000/tasks/1` |
+| GET /health  | `curl http://localhost:3000/health` |
 
-### Milestone 1 – REST API
+## How to run Automated Tests
+In the `test/` directory, there are automated tests that exercise the endpoints against a test database. This test database is ran on port 5433 and is separate from the development database. To run the automated tests:
 
-Students will implement:
+1) Stand up the Test Database
+```bash
+docker compose -f docker-compose-test-db.yml up -d
+```
 
-- REST endpoints
-- database integration
-- CRUD operations
-- request validation
+2) Run the Tests
+```bash
+npm run test
+```
 
----
+3) Bring down the Test Database
+```bash
+docker compose -f docker-compose-test-db.yml down -v
+```
 
-### Milestone 2 – Authentication
-
-Students will add:
-
-- user accounts
-- password hashing
-- login endpoints
-- JWT authentication
-- protected routes
-
----
-
-### Milestone 3 – Architectural Extensions
-
-Students will extend the system with at least one of the following:
-
-- WebSockets for real-time updates
-- GraphQL API
-- multi-service architecture
-- asynchronous messaging
-- advanced API documentation
-
-Graduate students will complete an additional architecture extension and
-design analysis.
-
----
-
-# Learning Goals
-
-By completing this project students should understand:
-
-- how client/server systems communicate
-- how APIs are designed and implemented
-- how databases integrate with web services
-- how authentication works in distributed systems
-- how modern web architectures evolve over time
-
----
-
-# Academic Integrity
-
-All work submitted for this project must be your own.
-
-Students may use documentation and external references, but copying code
-from other students or online repositories is considered academic misconduct.
-
----
-
-# License
+## License
 
 This repository is provided for educational use in CS453/553.
