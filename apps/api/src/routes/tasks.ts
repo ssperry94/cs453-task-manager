@@ -2,17 +2,10 @@
  * Holds all routes that act on task related endpoints
  */
 
-import { type Task, Status, HttpStatus } from "../types.js";
-import  Router, { type Request, type Response } from 'express';
-import { validateTask } from '../middleware/validation.js';
+import  Router from 'express';
+import { validateTask, validateTaskUpdate, validateId } from '../middleware/validation.js';
+import * as taskController from "../controllers/taskController.js";
 
-// TODO(#3): Database needs to handle ID
-let currentId = 2;
-// TODO(#3) Move to database
-const tasks: Task[] = [
-    {id: 1, title: "Dummy Task 1", status: Status.IN_PROGRESS},
-    {id: 2, title: "Dummy Task 2", status: Status.TODO}
-];
 
 // the router associated with tasks
 export const taskRouter = Router();
@@ -20,21 +13,24 @@ export const taskRouter = Router();
 /**
  * The /tasks get request. Returns all known tasks
  */
-taskRouter.get("/tasks", (req: Request, res: Response) => {
-    return res.status(HttpStatus.OK).json(tasks);
-});
+taskRouter.get("/tasks", taskController.getAllTasks);
+
+/**
+ * The /tasks/:id get request. Returns a specific task if found, otherwise 404
+ */
+taskRouter.get("/tasks/:id", validateId, taskController.getTask);
 
 /**
  * The /tasks post request. Adds a new task to the task database and sets the ID
  */
-taskRouter.post("/tasks", validateTask, (req: Request, res: Response) => {
-    const newTask = {
-        id: ++currentId,
-        title: req.body.title,
-        status: req.body.status
-    }
+taskRouter.post("/tasks", validateTask, taskController.createTask);
 
-    // Add the new task
-    tasks.push(newTask);
-    return res.status(HttpStatus.CREATED).json(newTask);
-});
+/**
+ * The /tasks/:id PATCH request. Updates the send fields of the task. Returns 404 if not found. At least one required field must be present
+ */
+taskRouter.patch("/tasks/:id", validateId, validateTaskUpdate, taskController.updateTask);
+
+/**
+ * Deletes a task. Returns 404 if the task is not found
+ */
+taskRouter.delete("/tasks/:id", validateId, taskController.deleteTask);

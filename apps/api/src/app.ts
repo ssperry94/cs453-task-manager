@@ -4,6 +4,7 @@
 
 import express, { type Application } from 'express';
 import { taskRouter } from './routes/tasks.js';
+import { healthRouter } from './routes/health.js';
 
 /**
  * Creates an express application with the proper configurations and routers for the web server
@@ -18,6 +19,7 @@ export function createApp() {
 
     // Add all routes
     app.use(taskRouter);
+    app.use(healthRouter);
 
     return app;
 }
