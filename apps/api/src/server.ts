@@ -8,7 +8,6 @@ const PORT = Number(process.env.PORT ?? 3000);
  * Main entry point of the server. Listens on the specified port, or defaults to port 3000
  */
 async function main() {
-    //TODO(#3): Add db connection logic
     const app = createApp();
 
     app.listen(PORT, () => {
