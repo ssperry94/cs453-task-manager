@@ -60,15 +60,18 @@ export async function getTask(req: Request, res: Response) {
  */
 export async function createTask(req: Request, res: Response) {
     const title = req.body.title;
-    const status= req.body.status;
+    const description = req.body.description;
+    const project_id = req.body.project_id;
+    const status = req.body.status;
+
     try {
       const result = await pool.query(
         `
-          INSERT INTO tasks (title, status)
-          VALUES ($1, $2)
-          RETURNING id, title, status
+          INSERT INTO tasks (title, description, project_id, status)
+          VALUES ($1, $2, $3, $4)
+          RETURNING id, title, description, project_id, status
         `,
-        [title, status]
+        [title, description, project_id, status]
       );
 
       return res.status(HttpStatus.CREATED).json(result.rows[0]);

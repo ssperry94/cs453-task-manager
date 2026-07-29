@@ -33,6 +33,8 @@ export const StatusSchema = z.enum([
 export const TaskSchema = z.object({
     id: z.number(),
     title: z.string(),
+    description: z.string(),
+    project_id: z.number(),
     status: StatusSchema
 });
 
@@ -46,6 +48,27 @@ export const TaskUpdateSchema = TaskCreationSchema.partial().refine(
 // Infer types from Zod Schema's
 export type Task = z.infer<typeof TaskSchema>;
 export type TaskCreation = z.infer<typeof TaskCreationSchema>;
+
+// Schema for Projects
+export const ProjectSchema = z.object({
+    id: z.number(),
+    name: z.string(),
+    description: z.string(),
+    owner_id: z.number()
+});
+
+// Create a type based on Project schema
+export type Project = z.infer<typeof ProjectSchema>;
+
+// Schema for a user
+export const UserSchema = z.object({
+    id: z.number(),
+    name: z.string(),
+    email: z.string(),
+    password_hash: z.string()
+});
+
+export type User = z.infer<typeof UserSchema>;
 
 // Enum representing common HttpStatuses
 export const HttpStatus = {
