@@ -72,6 +72,7 @@ describe("Unit testing for task routes", () => {
                 title: "Test Task",
                 description: "Task created during automated testing.",
                 project_id: 1,
+                assigned_to: 1,
                 status: Status.TODO
             })
             .expect(HttpStatus.CREATED);
@@ -83,6 +84,7 @@ describe("Unit testing for task routes", () => {
                 title: "Test Task",
                 description: "Task created during automated testing.",
                 project_id: 1,
+                assigned_to:1,
                 status: Status.TODO
             })
         );

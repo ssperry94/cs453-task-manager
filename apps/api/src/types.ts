@@ -4,6 +4,13 @@
 
 import * as z from 'zod';
 
+// The config schema defines all environment variables used
+export const ConfigSchema = z.object({
+    PORT: z.coerce.number().int().positive().default(3000),
+    JWT_SECRET: z.string().min(32),
+    DATABASE_URL: z.string().min(1)
+});
+
 // The status enum indicates the project of the task on the board
 export const Status = {
     TODO: "todo",
@@ -35,6 +42,7 @@ export const TaskSchema = z.object({
     title: z.string(),
     description: z.string(),
     project_id: z.number(),
+    assigned_to: z.number(),
     status: StatusSchema
 });
 

@@ -1,8 +1,5 @@
 import { createApp } from './app.js';
-import 'dotenv/config';
-
-// Read in the port
-const PORT = Number(process.env.PORT ?? 3000);
+import { config } from './constants.js'
 
 /**
  * Main entry point of the server. Listens on the specified port, or defaults to port 3000
@@ -10,8 +7,8 @@ const PORT = Number(process.env.PORT ?? 3000);
 async function main() {
     const app = createApp();
 
-    app.listen(PORT, () => {
-        console.log(`Connected to server on port: ${PORT}`);
+    app.listen(config.PORT, () => {
+        console.log(`Connected to server on port: ${config.PORT}`);
     });
 }
 

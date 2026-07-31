@@ -62,16 +62,17 @@ export async function createTask(req: Request, res: Response) {
     const title = req.body.title;
     const description = req.body.description;
     const project_id = req.body.project_id;
+    const assigned_to = req.body.assigned_to;
     const status = req.body.status;
 
     try {
       const result = await pool.query(
         `
-          INSERT INTO tasks (title, description, project_id, status)
-          VALUES ($1, $2, $3, $4)
-          RETURNING id, title, description, project_id, status
+          INSERT INTO tasks (title, description, project_id, assigned_to, status)
+          VALUES ($1, $2, $3, $4, $5)
+        RETURNING *
         `,
-        [title, description, project_id, status]
+        [title, description, project_id, assigned_to, status]
       );
 
       return res.status(HttpStatus.CREATED).json(result.rows[0]);
@@ -90,16 +91,19 @@ export async function createTask(req: Request, res: Response) {
 export async function updateTask(req: Request, res: Response) {
     const id = Number(req.params.id);
     const title = req.body.title ?? null;
+    const description = req.body.description;
+    const project_id = req.body.project_id;
+    const assigned_to = req.body.assigned_to;
     const status = req.body.status ?? null;
     try {
       const result = await pool.query(
         `
         UPDATE tasks
-        SET title = COALESCE($2, title), status = COALESCE($3, status), updated_at = NOW()
+        SET title = COALESCE($2, title), description = COALESCE($3, description), project_id = COALESCE($4, project_id), assigned_to = COALESCE($5, assigned_to), status = COALESCE($6, status), updated_at = NOW()
         WHERE id = $1
         RETURNING *
         `,
-        [id, title, status]
+        [id, title, description, project_id, assigned_to, status]
       );
 
       if (result.rowCount === 0) {
