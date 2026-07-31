@@ -65,9 +65,15 @@ export const UserSchema = z.object({
     id: z.number(),
     name: z.string(),
     email: z.string(),
+    role: z.string(),
     password_hash: z.string()
 });
 
+// Schema for creating a user
+export const UserCreationSchema = UserSchema.omit({
+    id: true,
+    role: true
+});
 export type User = z.infer<typeof UserSchema>;
 
 // Enum representing common HttpStatuses
