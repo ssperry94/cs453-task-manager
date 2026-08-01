@@ -2,11 +2,29 @@
  * Contains automated unit tests for the task routes
  */
 
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeEach, beforeAll, describe, expect, test } from "vitest";
 import { pool } from "../src/db/pool.js";
 import request from "supertest";
 import { createApp } from "../src/app.js";
 import { HttpStatus, Status } from "../src/types.js";
+import jwt from 'jsonwebtoken';
+import { config, jwtExpiresIn } from "../src/constants.js";
+
+// Generate a JWT token so requests can be successfully executed
+let testToken : string;
+
+beforeAll(() => {
+  testToken = jwt.sign(
+    {
+      userId: 1,
+      name: "Dummy User",
+      email: "dummy@example.com",
+      role: "user"
+    },
+    config.JWT_SECRET,
+    { expiresIn: jwtExpiresIn }
+  );
+});
 
 // Reset the database state before each test, so any task data currently
 // in the database will be lost
@@ -43,6 +61,7 @@ describe("Unit testing for task routes", () => {
 
         await request(app)
             .get("/tasks")
+            .set("Authorization", `Bearer ${testToken}`)
             .expect(HttpStatus.OK);
     });
 
@@ -51,6 +70,7 @@ describe("Unit testing for task routes", () => {
 
         await request(app)
             .get("/tasks/1")
+            .set("Authorization", `Bearer ${testToken}`)
             .expect(HttpStatus.OK);
     });
 
@@ -59,6 +79,7 @@ describe("Unit testing for task routes", () => {
 
         await request(app)
             .get("/tasks/9999")
+            .set("Authorization", `Bearer ${testToken}`)
             .expect(HttpStatus.NOT_FOUND);
     });
 
@@ -68,6 +89,7 @@ describe("Unit testing for task routes", () => {
         const res = await request(app)
             .post("/tasks")
             .set("Accept", "application/json")
+            .set("Authorization", `Bearer ${testToken}`)
             .send({
                 title: "Test Task",
                 description: "Task created during automated testing.",
@@ -96,6 +118,7 @@ describe("Unit testing for task routes", () => {
         await request(app)
             .post("/tasks")
             .set("Accept", "application/json")
+            .set("Authorization", `Bearer ${testToken}`)
             .send({
                 description: "Task missing its required title.",
                 project_id: 1,
@@ -110,11 +133,13 @@ describe("Unit testing for task routes", () => {
         // Get the task with an id of 1
         const expectedResponse = await request(app)
             .get("/tasks/1")
+            .set("Authorization", `Bearer ${testToken}`)
             .expect(HttpStatus.OK);
 
         const res = await request(app)
             .patch("/tasks/1")
             .set("Accept", "application/json")
+            .set("Authorization", `Bearer ${testToken}`)
             .send({
                 status: Status.WONT_DO
             })
@@ -131,6 +156,7 @@ describe("Unit testing for task routes", () => {
         await request(app)
             .patch("/tasks/1")
             .set("Accept", "application/json")
+            .set("Authorization", `Bearer ${testToken}`)
             .send({})
             .expect(HttpStatus.BAD_REQUEST);
     });
@@ -141,15 +167,18 @@ describe("Unit testing for task routes", () => {
         // Get the first task
         const toBeDeleted = await request(app)
             .get("/tasks/1")
+            .set("Authorization", `Bearer ${testToken}`)
             .expect(HttpStatus.OK);
 
         await request(app)
             .delete("/tasks/1")
+            .set("Authorization", `Bearer ${testToken}`)
             .expect(HttpStatus.NO_CONTENT);
 
         // Confirm the task was deleted
         const tasks = await request(app)
             .get("/tasks")
+            .set("Authorization", `Bearer ${testToken}`)
             .expect(HttpStatus.OK);
 
         expect(tasks.body).not.toContainEqual(toBeDeleted.body);

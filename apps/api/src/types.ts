@@ -3,6 +3,15 @@
 */
 
 import * as z from 'zod';
+import { type JwtPayload } from 'jsonwebtoken';
+
+// Because we have a custom user field from JWT's request, extend our JWT payload to include these fields
+export interface UserJwtPayload extends JwtPayload {
+    userId: number,
+    name: string,
+    email: string,
+    role: string
+};
 
 // The config schema defines all environment variables used
 export const ConfigSchema = z.object({
