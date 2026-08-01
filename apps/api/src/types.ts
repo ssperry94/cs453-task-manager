@@ -74,6 +74,11 @@ export const ProjectSchema = z.object({
     owner_id: z.number()
 });
 
+export const ProjectCreationSchema = ProjectSchema.omit({
+    id: true,
+    owner_id: true
+});
+
 // Create a type based on Project schema
 export type Project = z.infer<typeof ProjectSchema>;
 

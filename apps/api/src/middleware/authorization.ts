@@ -13,7 +13,6 @@ import jwt from 'jsonwebtoken';
  * @param header - a string representing the authorization header
  */
 function isolateToken(header: string) {
-    console.log("Header: ", header);
     if(!header.startsWith("Bearer ")) {
         return null;
     }

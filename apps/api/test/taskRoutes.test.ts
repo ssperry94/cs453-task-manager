@@ -65,6 +65,14 @@ describe("Unit testing for task routes", () => {
             .expect(HttpStatus.OK);
     });
 
+    test("GET /tasks returns unauthorized with no token present", async () => {
+        const app = createApp();
+
+        await request(app)
+            .get("/tasks")
+            .expect(HttpStatus.UNAUTHORIZED);        
+    });
+
     test("GET /tasks/:id returns status OK", async () => {
         const app = createApp();
 
@@ -72,6 +80,14 @@ describe("Unit testing for task routes", () => {
             .get("/tasks/1")
             .set("Authorization", `Bearer ${testToken}`)
             .expect(HttpStatus.OK);
+    });
+
+    test("GET /tasks/:id returns unauthorized with no token present", async () => {
+        const app = createApp();
+
+        await request(app)
+            .get("/tasks/1")
+            .expect(HttpStatus.UNAUTHORIZED);   
     });
 
     test("GET /tasks/:id returns NOT_FOUND on task that doesn't exist", async () => {
@@ -112,6 +128,22 @@ describe("Unit testing for task routes", () => {
         );
     });
 
+    test("POST /tasks returns unauthorized with no token present", async () => {
+        const app = createApp();
+
+        const res = await request(app)
+            .post("/tasks")
+            .set("Accept", "application/json")
+            .send({
+                title: "Test Task",
+                description: "Task created during automated testing.",
+                project_id: 1,
+                assigned_to: 1,
+                status: Status.TODO
+            })
+            .expect(HttpStatus.UNAUTHORIZED);
+    });
+
     test("POST /tasks correctly returns BAD REQUEST on missing field", async () => {
         const app = createApp();
 
@@ -150,6 +182,20 @@ describe("Unit testing for task routes", () => {
         expect(res.body.status).toBe(Status.WONT_DO);
     });
 
+    test("PATCH /tasks/:id returns unauthorized with no token present", async () => {
+        const app = createApp();
+
+        await request(app)
+            .patch("/tasks/1")
+            .set("Accept", "application/json")
+            .send({
+                description: "Task missing its required title.",
+                project_id: 1,
+                status: Status.TODO
+            })
+            .expect(HttpStatus.UNAUTHORIZED);
+    });
+
     test("PATCH /tasks/:id returns BAD REQUEST if no fields are present.", async () => {
         const app = createApp();
 
@@ -182,5 +228,13 @@ describe("Unit testing for task routes", () => {
             .expect(HttpStatus.OK);
 
         expect(tasks.body).not.toContainEqual(toBeDeleted.body);
+    });
+
+    test("DELETE /tasks/:id returns unauthorized with no token present.", async () => {
+        const app = createApp();
+
+        await request(app)
+            .delete("/tasks/1")
+            .expect(HttpStatus.UNAUTHORIZED);
     });
 });

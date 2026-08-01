@@ -1,4 +1,13 @@
-import { TaskCreationSchema, TaskUpdateSchema, HttpStatus, IdSchema, UserCreationSchema, UserLoginSchema } from "../types.js";
+import {
+    TaskCreationSchema,
+    TaskUpdateSchema,
+    HttpStatus,
+    IdSchema,
+    UserCreationSchema,
+    UserLoginSchema,
+    ProjectCreationSchema 
+} from "../types.js";
+
 import { type Request, type Response, type NextFunction } from 'express';
 
 /**
@@ -44,6 +53,16 @@ export function validateId(req: Request, res: Response, next: NextFunction) {
  */
 export function validateTaskUpdate(req: Request, res: Response, next: NextFunction) {
     const result = TaskUpdateSchema.safeParse(req.body);
+
+    if (!result.success) {
+        return res.status(HttpStatus.BAD_REQUEST).json(result.error.issues);
+    }
+
+    next();
+}
+
+export function validateProjectCreation(req: Request, res: Response, next: NextFunction) {
+    const result = ProjectCreationSchema.safeParse(req.body);
 
     if (!result.success) {
         return res.status(HttpStatus.BAD_REQUEST).json(result.error.issues);
