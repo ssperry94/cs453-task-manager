@@ -11,7 +11,7 @@ coverage/
 *.js
 *.js.map
 *.d.ts
-
+!apps/api/src/types/index.d.ts
 # TypeScript cache
 *.tsbuildinfo
 
