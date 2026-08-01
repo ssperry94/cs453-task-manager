@@ -26,12 +26,24 @@ CREATE TABLE IF NOT EXISTS tasks (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Insert a dummy user account
 INSERT INTO users (name, email, password_hash, role)
 VALUES (
     'Dummy User',
     'dummy@example.com',
+    -- Password is dummy_hash
     '$2b$10$QYc.barIqrDHWUiCqutB/uI2mUIW3fCk7EFh61ml0F4vFaqjOZ72i',
     'user'
+);
+
+-- Insert a dummy admin account
+INSERT INTO users (name, email, password_hash, role)
+VALUES (
+    'admin',
+    'admin@example.com',
+    -- Password is admin
+    '$2b$10$BE21VCanbrDW3BWBFIvTEembb8jL.59kfKmoFFcQyZiEMKosCKMtC',
+    'admin'
 );
 
 INSERT INTO projects (name, description, owner_id)

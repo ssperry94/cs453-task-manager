@@ -21,6 +21,14 @@ beforeEach(async () => {
             'user'
         );
 
+        INSERT INTO users (name, email, password_hash, role)
+        VALUES (
+        'admin',
+        'admin@example.com',
+        '$2b$10$BE21VCanbrDW3BWBFIvTEembb8jL.59kfKmoFFcQyZiEMKosCKMtC',
+        'admin'
+        );
+
         INSERT INTO projects (name, description, owner_id)
         VALUES (
             'Dummy Project',

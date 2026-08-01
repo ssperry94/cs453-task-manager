@@ -36,9 +36,13 @@ export async function getTask(req: Request, res: Response) {
         const result = await pool.query(
             `
             SELECT * FROM tasks
-            WHERE id = $1
+            WHERE id = $1 AND project_id IN (
+              SELECT ID
+              FROM projects
+              WHERE owner_id = $2
+              )
             `,
-            [id]
+            [id, req.user!.userId]
         );
 
         if (result.rowCount === 0) {
@@ -100,10 +104,14 @@ export async function updateTask(req: Request, res: Response) {
         `
         UPDATE tasks
         SET title = COALESCE($2, title), description = COALESCE($3, description), project_id = COALESCE($4, project_id), assigned_to = COALESCE($5, assigned_to), status = COALESCE($6, status), updated_at = NOW()
-        WHERE id = $1
+        WHERE id = $1 AND project_id IN (
+          SELECT ID
+          FROM projects
+          WHERE owner_id = $7
+        )
         RETURNING *
         `,
-        [id, title, description, project_id, assigned_to, status]
+        [id, title, description, project_id, assigned_to, status, req.user!.userId]
       );
 
       if (result.rowCount === 0) {
@@ -129,10 +137,14 @@ export async function deleteTask(req: Request, res: Response) {
       const result = await pool.query(
         `
         DELETE FROM tasks
-        WHERE id = $1
+        WHERE id = $1 AND project_id IN (
+              SELECT ID
+              FROM projects
+              WHERE owner_id = $2
+              )
         RETURNING *
         `,
-        [id]
+        [id, req.user!.userId]
       );
 
       if (result.rowCount === 0) {

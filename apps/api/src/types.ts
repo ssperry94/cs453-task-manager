@@ -10,7 +10,7 @@ export interface UserJwtPayload extends JwtPayload {
     userId: number,
     name: string,
     email: string,
-    role: string
+    role: Role
 };
 
 // The config schema defines all environment variables used
@@ -30,7 +30,21 @@ export const Status = {
 
 export type Status = typeof Status[keyof typeof Status];
 
+// The role enum determines user can either be 'user' or 'admin'
+export const Role = {
+    USER: "user",
+    ADMIN: "admin"
+} as const;
+
+export type Role = typeof Role[keyof typeof Role];
+
 // Schema's
+
+// Schema representing a role enum
+export const RoleSchema = z.enum([
+    Role.USER,
+    Role.ADMIN
+]);
 
 // Schema for validating an ID when it is part of a URL's parameters
 export const IdSchema = z.object({
@@ -87,7 +101,7 @@ export const UserSchema = z.object({
     id: z.number(),
     name: z.string(),
     email: z.string(),
-    role: z.string(),
+    role: RoleSchema,
     password_hash: z.string()
 });
 
@@ -110,6 +124,7 @@ export const HttpStatus = {
     NO_CONTENT: 204,
     BAD_REQUEST: 400,
     UNAUTHORIZED: 401,
+    FORBIDDEN: 403,
     NOT_FOUND: 404,
     INTERNAL_SERVER_ERROR: 500,
 } as const;

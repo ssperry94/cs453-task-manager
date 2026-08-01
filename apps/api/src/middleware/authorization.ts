@@ -3,7 +3,7 @@
 */
 
 import type { Request, Response, NextFunction } from "express";
-import { HttpStatus, type UserJwtPayload } from "../types.js";
+import { HttpStatus, type UserJwtPayload, Role } from "../types.js";
 import { config } from "../constants.js";
 import jwt from 'jsonwebtoken';
 
@@ -40,4 +40,19 @@ export function authenticateRequest(req: Request, res: Response, next: NextFunct
     } catch {
         return res.status(HttpStatus.UNAUTHORIZED).json({error: "User does not have proper authorization."}); 
     }
+}
+
+export function requiresAdmin(req: Request, res: Response, next: NextFunction) {
+    const role = req.user?.role;
+
+    // Somehow we have received a request without any authentication
+    if (!role) {
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({error: "Internal Server Error"});
+    }
+
+    if (role !== Role.ADMIN) {
+        return res.status(HttpStatus.FORBIDDEN).json({error: "You are not authorized to access this resource."});
+    }
+
+    next();
 }

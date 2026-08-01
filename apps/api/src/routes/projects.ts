@@ -4,7 +4,7 @@
 
 import  Router from 'express';
 import { validateId, validateProjectCreation } from '../middleware/validation.js';
-import { authenticateRequest } from '../middleware/authorization.js';
+import { authenticateRequest, requiresAdmin } from '../middleware/authorization.js';
 import * as projectController from "../controllers/projectController.js";
 
 export const projectRouter = Router();
@@ -12,7 +12,7 @@ export const projectRouter = Router();
 /**
  * Router to get all projects
  */
-projectRouter.get("/projects", authenticateRequest, projectController.getAllProjects);
+projectRouter.get("/projects", authenticateRequest, requiresAdmin, projectController.getAllProjects);
 
 /**
  * Route to get a specific project

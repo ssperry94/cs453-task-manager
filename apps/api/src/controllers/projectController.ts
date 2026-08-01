@@ -24,9 +24,9 @@ export async function getProject(req: Request, res: Response) {
         const result = await pool.query(
             `
             SELECT * FROM projects
-            WHERE id = $1
+            WHERE id = $1 AND owner_id = $2
             `,
-            [id]
+            [id, req.user!.userId]
         );
 
         if (result.rowCount === 0) {

@@ -52,7 +52,7 @@ Ensure that you have followed the above steps to properly run the server. There 
 
 | Endpoint | Curl Command |
 | -------- | ------------ |
-| POST /auth/register | `curl -X POST http://localhost:3000/auth/register -H "Content-Type: application/json" -d '{"name":"John Doe","email":"john@example.com","password_hash":"joedoe123!"}` |
+| POST /auth/register | `curl -X POST http://localhost:3000/auth/register -H "Content-Type: application/json" -d '{"name":"John Doe","email":"john@example.com","password_hash":"joedoe123!"}'` |
 | POST /auth/login | `curl -X POST http://localhost:3000/auth/login -H "Content-Type: application/json" -d '{"email":"dummy@example.com","password_hash":"dummy_hash"}'` |
 | GET /tasks | `curl http://localhost:3000/tasks -H "Authorization: Bearer $USRTOK"` |
 | GET /tasks/{id} | `curl http://localhost:3000/tasks/1 -H "Authorization: Bearer $USRTOK"` |

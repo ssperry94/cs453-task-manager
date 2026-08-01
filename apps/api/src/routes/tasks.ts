@@ -4,7 +4,7 @@
 
 import  Router from 'express';
 import { validateTask, validateTaskUpdate, validateId } from '../middleware/validation.js';
-import { authenticateRequest } from '../middleware/authorization.js';
+import { authenticateRequest, requiresAdmin } from '../middleware/authorization.js';
 import * as taskController from "../controllers/taskController.js";
 
 
@@ -14,7 +14,7 @@ export const taskRouter = Router();
 /**
  * The /tasks get request. Returns all known tasks
  */
-taskRouter.get("/tasks", authenticateRequest, taskController.getAllTasks);
+taskRouter.get("/tasks", authenticateRequest, requiresAdmin, taskController.getAllTasks);
 
 /**
  * The /tasks/:id get request. Returns a specific task if found, otherwise 404

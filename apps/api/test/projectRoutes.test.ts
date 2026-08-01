@@ -11,6 +11,7 @@ import { config, jwtExpiresIn } from "../src/constants.js";
 
 // Generate a JWT token so requests can be successfully executed
 let testToken : string;
+let adminToken : string
 
 beforeAll(() => {
   testToken = jwt.sign(
@@ -23,6 +24,17 @@ beforeAll(() => {
     config.JWT_SECRET,
     { expiresIn: jwtExpiresIn }
   );
+
+  adminToken = jwt.sign(
+    {
+        userId: 2,
+        name: "admin",
+        email: "admin@example.com",
+        role: "admin"
+    },
+    config.JWT_SECRET,
+    { expiresIn: jwtExpiresIn }
+  );
 });
 
 describe("Unit testing for project routes", () => {
@@ -31,7 +43,7 @@ describe("Unit testing for project routes", () => {
 
         await request(app)
             .get("/projects")
-            .set("Authorization", `Bearer ${testToken}`)
+            .set("Authorization", `Bearer ${adminToken}`)
             .expect(HttpStatus.OK);
     });
 
