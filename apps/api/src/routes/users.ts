@@ -3,7 +3,7 @@
  */
 
 import { Router } from 'express';
-import { validateUserRegistration } from '../middleware/validation.js'
+import { validateUserRegistration, validateUserLogIn } from '../middleware/validation.js'
 import * as userController from "../controllers/userController.js";
 
 export const userRouter = Router();
@@ -11,7 +11,7 @@ export const userRouter = Router();
 /**
  * Endpoint responsible for logging user in
  */
-userRouter.post("/auth/login", userController.loginUser);
+userRouter.post("/auth/login", validateUserLogIn, userController.loginUser);
 
 /**
  * Endpoint responsible for registering user

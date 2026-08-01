@@ -1,4 +1,4 @@
-import { TaskCreationSchema, TaskUpdateSchema, HttpStatus, IdSchema, UserCreationSchema } from "../types.js";
+import { TaskCreationSchema, TaskUpdateSchema, HttpStatus, IdSchema, UserCreationSchema, UserLoginSchema } from "../types.js";
 import { type Request, type Response, type NextFunction } from 'express';
 
 /**
@@ -54,6 +54,16 @@ export function validateTaskUpdate(req: Request, res: Response, next: NextFuncti
 
 export function validateUserRegistration(req: Request, res: Response, next: NextFunction) {
     const result = UserCreationSchema.safeParse(req.body);
+
+    if (!result.success) {
+        return res.status(HttpStatus.BAD_REQUEST).json(result.error.issues);
+    }
+
+    next();
+}
+
+export function validateUserLogIn(req: Request, res: Response, next: NextFunction) {
+    const result = UserLoginSchema.safeParse(req.body);
 
     if (!result.success) {
         return res.status(HttpStatus.BAD_REQUEST).json(result.error.issues);

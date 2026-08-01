@@ -30,7 +30,7 @@ INSERT INTO users (name, email, password_hash, role)
 VALUES (
     'Dummy User',
     'dummy@example.com',
-    'dummy_hash',
+    '$2b$10$QYc.barIqrDHWUiCqutB/uI2mUIW3fCk7EFh61ml0F4vFaqjOZ72i',
     'user'
 );
 

@@ -82,6 +82,11 @@ export const UserCreationSchema = UserSchema.omit({
     id: true,
     role: true
 });
+export const UserLoginSchema = UserSchema.omit({
+    id: true,
+    role: true,
+    name: true
+})
 export type User = z.infer<typeof UserSchema>;
 
 // Enum representing common HttpStatuses
@@ -90,6 +95,7 @@ export const HttpStatus = {
     CREATED: 201,
     NO_CONTENT: 204,
     BAD_REQUEST: 400,
+    UNAUTHORIZED: 401,
     NOT_FOUND: 404,
     INTERNAL_SERVER_ERROR: 500,
 } as const;
