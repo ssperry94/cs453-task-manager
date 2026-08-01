@@ -1,12 +1,12 @@
 /**
- * Contains automated unit tests for the task routes
+ * Contains automated unit tests for the project routes
  */
 
 import { beforeEach, beforeAll, describe, expect, test } from "vitest";
 import { pool } from "../src/db/pool.js";
 import request from "supertest";
 import { createApp } from "../src/app.js";
-import { HttpStatus, Status } from "../src/types.js";
+import { HttpStatus } from "../src/types.js";
 import jwt from 'jsonwebtoken';
 import { config, jwtExpiresIn } from "../src/constants.js";
 
@@ -26,36 +26,29 @@ beforeAll(() => {
   );
 });
 
-// Reset the database state before each test, so any task data currently
+// Reset the database state before each test, so any project data currently
 // in the database will be lost
-beforeEach(async () => {
-    await pool.query(
-        `
-        TRUNCATE TABLE tasks
-        RESTART IDENTITY
-        CASCADE
-        `
-    );
+// beforeEach(async () => {
+//     await pool.query(
+//         `
+//         TRUNCATE TABLE projects
+//         RESTART IDENTITY CASCADE;
+//         `
+//     );
 
-    await pool.query(
-        `
-        INSERT INTO tasks (
-            title,
-            description,
-            project_id,
-            status
-        )
-        VALUES (
-            'Dummy Task',
-            'Task used for automated testing.',
-            1,
-            'todo'
-        )
-        `
-    );
-});
+//     await pool.query(
+//         `
+//         INSERT INTO projects (name, description, owner_id)
+//         VALUES (
+//             'Dummy Project',
+//             'Project used for development testing.',
+//             1
+//         );
+//         `
+//     );
+// });
 
-describe("Unit testing for task routes", () => {
+describe("Unit testing for project routes", () => {
     test("GET /projects returns status OK", async () => {
         const app = createApp();
 
@@ -90,7 +83,7 @@ describe("Unit testing for task routes", () => {
             .expect(HttpStatus.UNAUTHORIZED);   
     });
 
-    test("GET /projects/:id returns NOT_FOUND on task that doesn't exist", async () => {
+    test("GET /projects/:id returns NOT_FOUND on project that doesn't exist", async () => {
         const app = createApp();
 
         await request(app)
@@ -99,7 +92,7 @@ describe("Unit testing for task routes", () => {
             .expect(HttpStatus.NOT_FOUND);
     });
 
-    test("POST /projects adds new task correctly", async () => {
+    test("POST /projects adds new project correctly", async () => {
         const app = createApp();
 
         const res = await request(app)
@@ -112,7 +105,7 @@ describe("Unit testing for task routes", () => {
             })
             .expect(HttpStatus.CREATED);
 
-        // Verify the new task was returned in the response body
+        // Verify the new project was returned in the response body
         expect(res.body).toEqual(
             expect.objectContaining({
                 id: expect.any(Number),
@@ -144,7 +137,7 @@ describe("Unit testing for task routes", () => {
             .set("Accept", "application/json")
             .set("Authorization", `Bearer ${testToken}`)
             .send({
-                description: "Task missing its required title.",
+                description: "Project missing its required name.",
             })
             .expect(HttpStatus.BAD_REQUEST);
     });

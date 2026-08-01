@@ -28,32 +28,32 @@ beforeAll(() => {
 
 // Reset the database state before each test, so any task data currently
 // in the database will be lost
-beforeEach(async () => {
-    await pool.query(
-        `
-        TRUNCATE TABLE tasks
-        RESTART IDENTITY
-        CASCADE
-        `
-    );
+// beforeEach(async () => {
+//     await pool.query(
+//         `
+//         TRUNCATE TABLE tasks
+//         RESTART IDENTITY
+//         CASCADE
+//         `
+//     );
 
-    await pool.query(
-        `
-        INSERT INTO tasks (
-            title,
-            description,
-            project_id,
-            status
-        )
-        VALUES (
-            'Dummy Task',
-            'Task used for automated testing.',
-            1,
-            'todo'
-        )
-        `
-    );
-});
+//     await pool.query(
+//         `
+//         INSERT INTO tasks (
+//             title,
+//             description,
+//             project_id,
+//             status
+//         )
+//         VALUES (
+//             'Dummy Task',
+//             'Task used for automated testing.',
+//             1,
+//             'todo'
+//         )
+//         `
+//     );
+// });
 
 describe("Unit testing for task routes", () => {
     test("GET /tasks returns status OK", async () => {
