@@ -2,8 +2,7 @@
  * Contains automated unit tests for the project routes
  */
 
-import { beforeEach, beforeAll, describe, expect, test } from "vitest";
-import { pool } from "../src/db/pool.js";
+import { beforeAll, describe, expect, test } from "vitest";
 import request from "supertest";
 import { createApp } from "../src/app.js";
 import { HttpStatus } from "../src/types.js";
@@ -25,28 +24,6 @@ beforeAll(() => {
     { expiresIn: jwtExpiresIn }
   );
 });
-
-// Reset the database state before each test, so any project data currently
-// in the database will be lost
-// beforeEach(async () => {
-//     await pool.query(
-//         `
-//         TRUNCATE TABLE projects
-//         RESTART IDENTITY CASCADE;
-//         `
-//     );
-
-//     await pool.query(
-//         `
-//         INSERT INTO projects (name, description, owner_id)
-//         VALUES (
-//             'Dummy Project',
-//             'Project used for development testing.',
-//             1
-//         );
-//         `
-//     );
-// });
 
 describe("Unit testing for project routes", () => {
     test("GET /projects returns status OK", async () => {
