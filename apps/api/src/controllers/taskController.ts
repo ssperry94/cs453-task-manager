@@ -1,7 +1,7 @@
-import { HttpStatus } from "../types.js";
+import { HttpStatus, Role } from "../types.js";
 import { type Request, type Response } from 'express';
 import { pool } from '../db/pool.js';
-
+import { CHECK_TASK_PROJECT_RELATIONSHIP } from "../constants.js";
 /**
  * Queries the database for all current tasks
  * @param req the incoming request
@@ -36,11 +36,7 @@ export async function getTask(req: Request, res: Response) {
         const result = await pool.query(
             `
             SELECT * FROM tasks
-            WHERE id = $1 AND project_id IN (
-              SELECT ID
-              FROM projects
-              WHERE owner_id = $2
-              )
+            WHERE id = $1 ${req.user!.role === Role.USER ? CHECK_TASK_PROJECT_RELATIONSHIP + "$2)": ""}
             `,
             [id, req.user!.userId]
         );
@@ -70,11 +66,27 @@ export async function createTask(req: Request, res: Response) {
     const status = req.body.status;
 
     try {
+      // If we are only a user, we cannot add a task to a project we don't own
+      if (req.user!.role !== Role.ADMIN) {
+        const isOwnedProject = await pool.query(
+          `
+          SELECT id
+          FROM projects
+          WHERE id = $1 AND owner_id = $2
+          `,
+          [project_id, req.user!.userId]
+        )
+
+        if (isOwnedProject.rowCount === 0) {
+          return res.status(HttpStatus.FORBIDDEN).json({error: "You do not own this project."});
+        }
+      }
+
       const result = await pool.query(
         `
           INSERT INTO tasks (title, description, project_id, assigned_to, status)
           VALUES ($1, $2, $3, $4, $5)
-        RETURNING *
+          RETURNING *
         `,
         [title, description, project_id, assigned_to, status]
       );
@@ -104,11 +116,7 @@ export async function updateTask(req: Request, res: Response) {
         `
         UPDATE tasks
         SET title = COALESCE($2, title), description = COALESCE($3, description), project_id = COALESCE($4, project_id), assigned_to = COALESCE($5, assigned_to), status = COALESCE($6, status), updated_at = NOW()
-        WHERE id = $1 AND project_id IN (
-          SELECT ID
-          FROM projects
-          WHERE owner_id = $7
-        )
+        WHERE id = $1 ${req.user!.role === Role.USER ? CHECK_TASK_PROJECT_RELATIONSHIP + "$7)": ""}
         RETURNING *
         `,
         [id, title, description, project_id, assigned_to, status, req.user!.userId]
@@ -137,11 +145,7 @@ export async function deleteTask(req: Request, res: Response) {
       const result = await pool.query(
         `
         DELETE FROM tasks
-        WHERE id = $1 AND project_id IN (
-              SELECT ID
-              FROM projects
-              WHERE owner_id = $2
-              )
+        WHERE id = $1 ${req.user!.role === Role.USER ? CHECK_TASK_PROJECT_RELATIONSHIP + "$2)": ""}
         RETURNING *
         `,
         [id, req.user!.userId]
