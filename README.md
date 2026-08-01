@@ -52,11 +52,13 @@ Ensure that you have followed the above steps to properly run the server. There 
 
 | Endpoint | Curl Command |
 | -------- | ------------ |
-| GET /tasks | `curl http://localhost:3000/tasks` |
-| GET /tasks/{id} | `curl http://localhost:3000/tasks/1` |
-| POST /tasks | `curl -X POST http://localhost:3000/tasks -H "Content-Type: application/json" -d '{"title":"Dummy Task","status":"todo"}'` |
-| PATCH /tasks/{id} | `curl -X PATCH http://localhost:3000/tasks/1 -H "Content-Type: application/json" -d '{"title":"Updated Task","status":"done"}'` |
-| DELETE /tasks/{id} | `curl -X DELETE http://localhost:3000/tasks/1` |
+| POST /auth/register | `curl -X POST http://localhost:3000/auth/register -H "Content-Type: application/json" -d '{"name":"John Doe","email":"john@example.com","password_hash":"joedoe123!"}` |
+| POST /auth/login | `curl -X POST http://localhost:3000/auth/login -H "Content-Type: application/json" -d '{"email":"dummy@example.com","password_hash":"dummy_hash"}'` |
+| GET /tasks | `curl http://localhost:3000/tasks -H "Authorization: Bearer $USRTOK"` |
+| GET /tasks/{id} | `curl http://localhost:3000/tasks/1 -H "Authorization: Bearer $USRTOK"` |
+| POST /tasks | `curl -X POST http://localhost:3000/tasks -H "Authorization: Bearer $USRTOK" -H "Content-Type: application/json" -d '{"title":"Dummy Task","description":"This is a dummy task.","project_id":1,"assigned_to":1,"status":"todo"}'` |
+| PATCH /tasks/{id} | `curl -X PATCH http://localhost:3000/tasks/1 -H "Authorization: Bearer $USRTOK" -H "Content-Type: application/json" -d '{"title":"Updated Task","description":"Updated description.","project_id":1,"assigned_to":1,"status":"done"}'` |
+| DELETE /tasks/{id} | `curl -X DELETE http://localhost:3000/tasks/1 -H "Authorization: Bearer $USRTOK"` |
 | GET /health  | `curl http://localhost:3000/health` |
 
 ## How to run Automated Tests
