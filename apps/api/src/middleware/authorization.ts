@@ -20,6 +20,13 @@ function isolateToken(header: string) {
     return header.slice("Bearer ".length);
 }
 
+/**
+ * Ensures that the incoming request contains a valid JWT token
+ * 
+ * @param req the incoming request
+ * @param res the outgoing response
+ * @param next the callback to call the next middleware
+ */
 export function authenticateRequest(req: Request, res: Response, next: NextFunction) {
     const authHeader = req.get("authorization");
 
@@ -42,6 +49,13 @@ export function authenticateRequest(req: Request, res: Response, next: NextFunct
     }
 }
 
+/**
+ * EEnforces that the user has the ADMIN role before access to the endpoint is granted
+ * 
+ * @param req the incoming request
+ * @param res the outgoing response
+ * @param next the callback to call the next middleware
+ */
 export function requiresAdmin(req: Request, res: Response, next: NextFunction) {
     const role = req.user?.role;
 

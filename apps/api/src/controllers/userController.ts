@@ -7,6 +7,13 @@ import { DatabaseError } from 'pg';
 import jwt from "jsonwebtoken";
 import { config, jwtExpiresIn } from '../constants.js';
 
+/**
+ * Verifies the incoming credentials and returns a JWT token if successfully authenticated
+ * 
+ * @param req the incoming request
+ * @param res the outgoing response
+ * @returns a JWT token if use is able to be authenticated
+ */
 export async function loginUser(req: Request, res: Response) {
   const email = req.body.email;
   const password = req.body.password_hash;
@@ -24,6 +31,7 @@ export async function loginUser(req: Request, res: Response) {
       return res.status(HttpStatus.UNAUTHORIZED).json({error: "Email or password could not be verified."});
     }
 
+    // Create the JWT token
     const jwtToken = jwt.sign(
       {userId: user.id, name: user.name, email: user.email, role: user.role},
       config.JWT_SECRET,
@@ -47,9 +55,18 @@ export async function loginUser(req: Request, res: Response) {
   }
 }
 
+/**
+ * The endpoint responsible for registering the user
+ * 
+ * @param req the incoming request
+ * @param res the outgoing response
+ * @returns the newly registered user or an error message
+ */
 export async function registerUser(req: Request, res: Response) {
   const name = req.body.name;
   const email = req.body.email;
+
+  // Create the password hash to avoid storing plain text
   const password = await bcrypt.hash(req.body.password_hash, BCRYPT_COST);
 
   try {

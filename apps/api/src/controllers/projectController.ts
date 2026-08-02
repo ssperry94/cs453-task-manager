@@ -2,6 +2,13 @@ import { HttpStatus } from "../types.js";
 import { type Request, type Response } from 'express';
 import { pool } from '../db/pool.js';
 
+/**
+ * Returns all projects present in the database
+ * 
+ * @param req the incoming request
+ * @param res the outgoing response containing all projects
+ * @returns a response containing all projects in the database
+ */
 export async function getAllProjects(req: Request, res: Response) {
     try {
       const result = await pool.query(`
@@ -17,6 +24,13 @@ export async function getAllProjects(req: Request, res: Response) {
     }
 }
 
+/**
+ * Returns the project specified by the ID, or NOT_FOUND if the project cannot be found.
+ * 
+ * @param req the incoming request
+ * @param res the outgoing response
+ * @returns a response containing the project by ID, or an error message 
+ */
 export async function getProject(req: Request, res: Response) {
     const id = req.params.id;
 
@@ -40,6 +54,13 @@ export async function getProject(req: Request, res: Response) {
     }
 }
 
+/**
+ * Creates a new project to be stored in the database
+ * 
+ * @param req the incoming request
+ * @param res the outgoing response
+ * @returns a response containing the newly created project, or an error message
+ */
 export async function createProject(req: Request, res: Response) {
     const name = req.body.name;
     const description = req.body.description;

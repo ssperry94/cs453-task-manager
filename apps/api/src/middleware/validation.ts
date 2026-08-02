@@ -61,6 +61,13 @@ export function validateTaskUpdate(req: Request, res: Response, next: NextFuncti
     next();
 }
 
+/**
+ * Validates a project object to ensure all required fields are found for project creation
+ * @param req the incoming request
+ * @param res the outgoing response
+ * @param next a function to call the next middleware
+ * @returns a BAD REQUEST if errors are detected, or just proceeds to next middleware on success
+ */
 export function validateProjectCreation(req: Request, res: Response, next: NextFunction) {
     const result = ProjectCreationSchema.safeParse(req.body);
 
@@ -71,6 +78,13 @@ export function validateProjectCreation(req: Request, res: Response, next: NextF
     next();
 }
 
+/**
+ * Validates a user object to ensure that all correct fields are given to register a user
+ * @param req the incoming request
+ * @param res the outgoing response
+ * @param next a function to call the next middleware
+ * @returns a BAD REQUEST if errors are detected, or just proceeds to next middleware on success
+ */
 export function validateUserRegistration(req: Request, res: Response, next: NextFunction) {
     const result = UserCreationSchema.safeParse(req.body);
 
@@ -81,6 +95,13 @@ export function validateUserRegistration(req: Request, res: Response, next: Next
     next();
 }
 
+/**
+ * Validates a user object to ensure the correct fields are present to login a user
+ * @param req the incoming request
+ * @param res the outgoing response
+ * @param next a function to call the next middleware
+ * @returns a BAD REQUEST if errors are detected, or just proceeds to next middleware on success
+ */
 export function validateUserLogIn(req: Request, res: Response, next: NextFunction) {
     const result = UserLoginSchema.safeParse(req.body);
 
